@@ -33,6 +33,7 @@
 #include "../base/base.h"
 #include "../base/hardware.h"
 #include "keyboard.h"
+#include "touchscreen.h"
 #include "timers.h"
 #include <pthread.h>
 #include <errno.h>
@@ -382,6 +383,7 @@ static void * _thread_keyboard(void *argument)
    while ( (*pbInitialized) )
    {
       hardware_loop();
+      touchscreen_loop();
       if ( ! (*pbInitialized) )
          break;
       if ( isKeyMenuPressed() )
@@ -446,6 +448,8 @@ int keyboard_init()
    s_iKeyboardDetectTryCount = 0;
    s_iCountKeyboardInputEvents = 0;
 
+   touchscreen_init();
+
    for( int i=0; i<10; i++ )
    {
       s_InputDevicesInfo[i].iFile = -1;
@@ -477,6 +481,8 @@ int keyboard_uninit()
    
    pthread_mutex_lock(&s_pThreadKeyboardMutex);
    pthread_mutex_unlock(&s_pThreadKeyboardMutex);
+
+   touchscreen_uninit();
 
    pthread_cancel(s_pThreadKeyboard);
    pthread_mutex_destroy(&s_pThreadKeyboardMutex);

@@ -100,6 +100,7 @@
 #include "link_watch.h"
 #include "warnings.h"
 #include "keyboard.h"
+#include "touchscreen.h"
 #include "media.h"
 #include "render_commands.h"
 #include "handle_commands.h"
@@ -663,14 +664,16 @@ void render_all_with_menus(u32 timeNow, bool bRenderMenus, bool bForceBackground
    popups_render();
    if ( bRenderMenus )
       menu_render();
-   popups_render_topmost();
+  popups_render_topmost();
 
    t = get_current_timestamp_micros() - t;
    if ( t < 300000 )
       s_iMicroTimeMenuRender = (s_iMicroTimeMenuRender*8 + t*2)/10;
   
-   if ( handle_commands_is_command_in_progress() )
-      render_commands();
+  if ( handle_commands_is_command_in_progress() )
+     render_commands();
+
+   touchscreen_render_buttons();
 
    s_iFPSCount++;
    if ( timeNow >= s_iFPSLastTimeCheck + 1000 )
